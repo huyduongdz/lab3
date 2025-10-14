@@ -1,0 +1,9 @@
+/*
+ * timer.c
+ *
+ *  Created on: Oct 14, 2025
+ *      Author: DELL
+ */
+
+#include "main.h"
+#include "input_reading.h"

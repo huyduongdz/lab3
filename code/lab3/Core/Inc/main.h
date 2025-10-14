@@ -54,7 +54,11 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+int timer0_counter = 0;
+int timer0_flag = 0;
 
+void setTimer0(int duration);
+void timer_run();
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
