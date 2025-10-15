@@ -54,14 +54,17 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-int timer0_counter = 0;
-int timer0_flag = 0;
+
+
+//new var
 
 void setTimer0(int duration);
 void timer_run();
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define BUTTON_1_Pin GPIO_PIN_0
+#define BUTTON_1_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
