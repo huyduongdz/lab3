@@ -109,6 +109,8 @@ void timer_run();
 #define SB6_GPIO_Port GPIOA
 #define SB7_Pin GPIO_PIN_14
 #define SB7_GPIO_Port GPIOA
+#define BLINKY_Pin GPIO_PIN_15
+#define BLINKY_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
