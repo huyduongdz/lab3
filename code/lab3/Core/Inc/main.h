@@ -63,8 +63,52 @@ void timer_run();
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define SA1_Pin GPIO_PIN_1
+#define SA1_GPIO_Port GPIOA
+#define SA2_Pin GPIO_PIN_2
+#define SA2_GPIO_Port GPIOA
+#define SA3_Pin GPIO_PIN_3
+#define SA3_GPIO_Port GPIOA
+#define SA4_Pin GPIO_PIN_4
+#define SA4_GPIO_Port GPIOA
+#define SA5_Pin GPIO_PIN_5
+#define SA5_GPIO_Port GPIOA
+#define SA6_Pin GPIO_PIN_6
+#define SA6_GPIO_Port GPIOA
+#define SA7_Pin GPIO_PIN_7
+#define SA7_GPIO_Port GPIOA
 #define BUTTON_1_Pin GPIO_PIN_0
 #define BUTTON_1_GPIO_Port GPIOB
+#define BUTTON_2_Pin GPIO_PIN_1
+#define BUTTON_2_GPIO_Port GPIOB
+#define BUTTON_3_Pin GPIO_PIN_2
+#define BUTTON_3_GPIO_Port GPIOB
+#define R1_Pin GPIO_PIN_10
+#define R1_GPIO_Port GPIOB
+#define G1_Pin GPIO_PIN_11
+#define G1_GPIO_Port GPIOB
+#define Y1_Pin GPIO_PIN_12
+#define Y1_GPIO_Port GPIOB
+#define R2_Pin GPIO_PIN_13
+#define R2_GPIO_Port GPIOB
+#define G2_Pin GPIO_PIN_14
+#define G2_GPIO_Port GPIOB
+#define Y2_Pin GPIO_PIN_15
+#define Y2_GPIO_Port GPIOB
+#define SB1_Pin GPIO_PIN_8
+#define SB1_GPIO_Port GPIOA
+#define SB2_Pin GPIO_PIN_9
+#define SB2_GPIO_Port GPIOA
+#define SB3_Pin GPIO_PIN_10
+#define SB3_GPIO_Port GPIOA
+#define SB4_Pin GPIO_PIN_11
+#define SB4_GPIO_Port GPIOA
+#define SB5_Pin GPIO_PIN_12
+#define SB5_GPIO_Port GPIOA
+#define SB6_Pin GPIO_PIN_13
+#define SB6_GPIO_Port GPIOA
+#define SB7_Pin GPIO_PIN_14
+#define SB7_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
