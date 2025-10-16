@@ -55,10 +55,16 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
-
-//new var
+extern int timer0_flag;
+extern int timerFPS_flag;
+extern int timer1s_flag;
+extern int mode;
+extern int redTemp;
+extern int yellowTemp;
+extern int greenTemp;
 
 void setTimer0(int duration);
+void setTimerFPS(int duration);
 void timer_run();
 /* USER CODE END EFP */
 
@@ -111,6 +117,10 @@ void timer_run();
 #define SB7_GPIO_Port GPIOA
 #define BLINKY_Pin GPIO_PIN_15
 #define BLINKY_GPIO_Port GPIOA
+#define AC1_Pin GPIO_PIN_3
+#define AC1_GPIO_Port GPIOB
+#define AC2_Pin GPIO_PIN_4
+#define AC2_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

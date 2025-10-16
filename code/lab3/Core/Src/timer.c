@@ -9,13 +9,29 @@
 #include "input_reading.h"
 
 int timer0_counter = 0;
+int timerFPS_counter = 0;
+int timer1s_counter = 0;
 int timer0_flag = 0;
+int timerFPS_flag = 0;
+int timer1s_flag = 0;
 int TIMER_CYCLE = 10;
 
 void setTimer0(int duration)
 {
 	timer0_counter = duration/TIMER_CYCLE;
 	timer0_flag = 0;
+}
+
+void setTimerFPS(int duration)
+{
+	timerFPS_counter = duration/TIMER_CYCLE;
+	timerFPS_flag = 0;
+}
+
+void setTimer1s(int duration)
+{
+	timer1s_counter = duration/TIMER_CYCLE;
+	timer1s_flag = 0;
 }
 
 void timer_run()
@@ -25,6 +41,20 @@ void timer_run()
 			timer0_counter--;
 			if(timer0_counter == 0)
 				timer0_flag = 1;
+		}
+
+	if (timerFPS_counter > 0)
+	{
+		timerFPS_counter--;
+		if(timerFPS_counter == 0)
+				timerFPS_flag = 1;
+	}
+
+	if (timer1s_counter > 0)
+		{
+			timer1s_counter--;
+			if(timer1s_counter == 0)
+				timer1s_flag = 1;
 		}
 }
 

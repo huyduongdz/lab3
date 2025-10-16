@@ -7,7 +7,10 @@
 
 #include "main.h"
 
-#define N0_OF_BUTTONS 1
+#define N0_OF_BUTTONS 3
+
+GPIO_TypeDef* buttonPort[N0_OF_BUTTONS] = {BUTTON_1_GPIO_Port, BUTTON_2_GPIO_Port, BUTTON_3_GPIO_Port};
+uint16_t buttonPin[N0_OF_BUTTONS] = {BUTTON_1_Pin, BUTTON_2_Pin, BUTTON_3_Pin};
 
 #define DURATION_FOR_AUTO_INCREASING 100
 #define BUTTON_IS_PRESSED GPIO_PIN_RESET
@@ -21,10 +24,10 @@ static uint16_t counterForButtonPress1s [ N0_OF_BUTTONS ];
 
 void button_reading(void)
 {
-	for(char i = 0; i < N0_OF_BUTTONS; i ++)
+	for(uint8_t i = 0; i < N0_OF_BUTTONS; i++ )
 	{
 		debounceButtonBuffer2[i] =debounceButtonBuffer1[i];
-		debounceButtonBuffer1[i] = HAL_GPIO_ReadPin(BUTTON_1_GPIO_Port, BUTTON_1_Pin);
+		debounceButtonBuffer1[i] = HAL_GPIO_ReadPin(buttonPort[i], buttonPin[i]);
 
 		if(debounceButtonBuffer1[i] == debounceButtonBuffer2[i])
 		{
