@@ -62,10 +62,19 @@ extern int mode;
 extern int redTemp;
 extern int yellowTemp;
 extern int greenTemp;
+extern int redTime;
+extern int yellowTime;
+extern int greenTime;
+extern int cooldown1;
+extern int cooldown2;
+extern int temp1;
+extern int temp2;
 
 void setTimer0(int duration);
 void setTimerFPS(int duration);
+void setTimer1s(int duration);
 void timer_run();
+void offLED();
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -121,6 +130,10 @@ void timer_run();
 #define AC1_GPIO_Port GPIOB
 #define AC2_Pin GPIO_PIN_4
 #define AC2_GPIO_Port GPIOB
+#define AC3_Pin GPIO_PIN_5
+#define AC3_GPIO_Port GPIOB
+#define AC4_Pin GPIO_PIN_6
+#define AC4_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
