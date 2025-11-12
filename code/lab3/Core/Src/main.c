@@ -22,6 +22,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "scheduler.h"
+#include "input_reading.h"
 #include "input_processing.h"
 /* USER CODE END Includes */
 
@@ -374,6 +376,12 @@ void displaySEG2(int num)
     }
 }
 
+void Task_Input_Handler(void)
+{
+	button_reading();
+	fsm_for_input_processing();
+}
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -411,11 +419,13 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start_IT (& htim2 );
+  SCH_Init();
 
-  setTimer0(10);
-  setTimerFPS(40);
-  setTimer1s(1000);
+  SCH_Add_Task(Task_Input_Handler, 1, 1);
+  SCH_Add_Task(fsm_for_1s_logic, 100, 100);
+  SCH_Add_Task(fsm_for_display_logic, 4, 4);
+
+  HAL_TIM_Base_Start_IT (& htim2 );
 
   cooldown1 = greenTime + yellowTime + redTime;
   cooldown2 = cooldown1;
@@ -427,6 +437,7 @@ int main(void)
   temp1 = greenTime - 1;
   temp2 = redTime - 1;
   redTime = greenTime + yellowTime;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -436,25 +447,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if (timer0_flag == 1)
-	  	  {
-	  		  setTimer0(10);
-	  		  fsm_for_input_processing(); // Chỉ xử lý logic nút nhấn
-	  	  }
-
-	  	  // Task 2: Xử lý logic 1 giây (chạy mỗi 1000ms)
-	  	  if (timer1s_flag == 1)
-	  	  {
-	  		  setTimer1s(1000);
-	  		  fsm_for_1s_logic(); // Xử lý FSM của đèn giao thông (Mode 1)
-	  	  }
-
-	  	  // Task 3: Xử lý hiển thị (chạy mỗi 40ms)
-	  	  if (timerFPS_flag == 1)
-	  	  {
-	  		  setTimerFPS(40);
-	  		  fsm_for_display_logic(); // Xử lý tất cả quét LED 7-seg và nhấp nháy LED
-	  	  }
+	  SCH_Dispatch_Tasks();
   }
   /* USER CODE END 3 */
 }
@@ -596,7 +589,13 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+    if (htim->Instance == TIM2)
+    {
+        SCH_Update();
+    }
+}
 /* USER CODE END 4 */
 
 /**

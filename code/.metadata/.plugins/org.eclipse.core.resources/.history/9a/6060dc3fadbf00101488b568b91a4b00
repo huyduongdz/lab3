@@ -5,8 +5,8 @@
  *      Author: DELL
  */
 
-#include "main.h"
-#include "input_reading.h"
+//#include "main.h"
+//#include "input_reading.h"
 
 int timer0_counter = 0;
 int timerFPS_counter = 0;

@@ -24,9 +24,6 @@ extern int timeSEG1[2];
 extern int timeSEG2[2];
 extern int toogleCount;
 
-extern void setTimerFPS(int duration);
-extern void setTimer1s(int duration);
-
 extern void offLED();
 extern void displayWhatSEG1(int time);
 extern void displayWhichSEG1(int index);
@@ -133,8 +130,6 @@ void fsm_for_input_processing(void){
 						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
 						temp1 = greenTime - 1;
 						temp2 = redTime - 1;
-						setTimerFPS(40);
-						setTimer1s(1000);
 					}
 					else if (i == 1)
 					{

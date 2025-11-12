@@ -55,9 +55,6 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
-extern int timer0_flag;
-extern int timerFPS_flag;
-extern int timer1s_flag;
 extern int mode;
 extern int greenTime;
 extern int yellowTime;
@@ -73,10 +70,6 @@ extern int ledIndex;
 extern int timeSEG1[2];
 extern int timeSEG2[2];
 extern int toogleCount;
-
-extern void setTimer0(int duration);
-extern void setTimer1s(int duration);
-extern void setTimerFPS(int duration);
 
 void displayWhichSEG1(int index);
 void displayWhichSEG2(int index);
