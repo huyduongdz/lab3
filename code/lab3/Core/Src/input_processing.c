@@ -8,6 +8,33 @@
 #include "main.h"
 #include "input_reading.h"
 
+extern int mode;
+extern int greenTime;
+extern int yellowTime;
+extern int redTime;
+extern int cooldown1;
+extern int cooldown2;
+extern int greenTemp;
+extern int yellowTemp;
+extern int redTemp;
+extern int temp1;
+extern int temp2;
+extern int ledIndex;
+extern int timeSEG1[2];
+extern int timeSEG2[2];
+extern int toogleCount;
+
+extern void setTimerFPS(int duration);
+extern void setTimer1s(int duration);
+
+extern void offLED();
+extern void displayWhatSEG1(int time);
+extern void displayWhichSEG1(int index);
+extern void displaySEG1(int num);
+extern void displayWhatSEG2(int time);
+extern void displayWhichSEG2(int index);
+extern void displaySEG2(int num);
+
 #define N0_OF_BUTTONS 3
 
 enum ButtonState{BUTTON_RELEASED, BUTTON_PRESSED, BUTTON_PRESSED_MORE_THAN_1_SECOND} ;
@@ -35,14 +62,6 @@ void fsm_for_input_processing(void){
 						redTemp = redTime;
 						yellowTemp = yellowTime;
 						greenTemp = greenTime;
-					}
-					else if (i == 1)
-					{
-
-					}
-					else if (i == 2)
-					{
-
 					}
 				}
 				else if (mode == 2)
@@ -106,16 +125,16 @@ void fsm_for_input_processing(void){
 						greenTemp = greenTime;
 						cooldown1 = redTime + yellowTime + greenTime;
 						cooldown2 = redTime + yellowTime + greenTime;
-					    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-					    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
-					    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-					    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
-					    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
-					    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
-					    temp1 = greenTime - 1;
-					    temp2 = redTime - 1;
-					    setTimerFPS(40);
-					    setTimer1s(1000);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+						HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+						temp1 = greenTime - 1;
+						temp2 = redTime - 1;
+						setTimerFPS(40);
+						setTimer1s(1000);
 					}
 					else if (i == 1)
 					{
@@ -164,8 +183,178 @@ void fsm_for_input_processing(void){
 						greenTemp = 0;
 				}
 			}
-
 			break;
 		}
+	}
+}
+
+void fsm_for_1s_logic(void)
+{
+	switch(mode)
+	{
+		case 1:
+		{
+			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_15); //blinky led
+
+			cooldown1--;
+			cooldown2--;
+
+			if (cooldown1 == redTime + yellowTime)
+			{
+				temp1 = yellowTime;
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //bat vang 1
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+			}
+			if (cooldown2 == greenTime + yellowTime)
+			{
+				temp2 = greenTime;
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET); //bat xanh 2
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
+			}
+			if (cooldown1 == redTime)
+			{
+				temp1 = redTime;
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //bat do 1
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+			}
+			if (cooldown2 == yellowTime)
+			{
+				temp2 = yellowTime;
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET); //bat vang 2
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
+			}
+			if (cooldown1 == 0)
+			{
+				temp1 = greenTime;
+				cooldown1 = greenTime + redTime + yellowTime;
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //bat xanh 1
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+			}
+			if (cooldown2 == 0)
+			{
+				temp2 = redTime;
+				cooldown2 = greenTime + redTime + yellowTime;
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET); //bat do 2
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
+			}
+
+			temp1--;
+			temp2--;
+			break;
+		}
+		case 2:
+		case 3:
+		case 4:
+		default:
+			break;
+	}
+}
+
+void fsm_for_display_logic(void)
+{
+	switch(mode)
+	{
+		case 1:
+		{
+			// Quét LED 7-seg cho mode 1
+			displayWhatSEG1(temp1);
+			displayWhichSEG1(ledIndex);
+			displaySEG1(timeSEG1[ledIndex]);
+
+			displayWhatSEG2(temp2);
+			displayWhichSEG2(ledIndex);
+			displaySEG2(timeSEG2[ledIndex]);
+
+			ledIndex++;
+			if (ledIndex > 1)
+				ledIndex = 0;
+			break;
+		}
+		case 2:
+		{
+			// Nhấp nháy LED Đỏ
+			if (toogleCount == 0)
+			{
+				HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);
+				HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13);
+			}
+			// Hiển thị thời gian Đỏ tạm thời
+			displayWhatSEG1(redTemp);
+			displayWhichSEG1(ledIndex);
+			displaySEG1(timeSEG1[ledIndex]);
+
+			// Hiển thị số 2 (mode 2)
+			displayWhichSEG2(1);
+			displaySEG2(mode);
+
+			// Logic quét LED
+			ledIndex++;
+			if (ledIndex > 1)
+				ledIndex = 0;
+			toogleCount--;
+			if (toogleCount < 0)
+				toogleCount = 12;
+			break;
+		}
+		case 3:
+		{
+			// Nhấp nháy LED Vàng
+			if (toogleCount == 0)
+			{
+				HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
+				HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_15);
+			}
+			// Hiển thị thời gian Vàng tạm thời
+			displayWhatSEG1(yellowTemp);
+			displayWhichSEG1(ledIndex);
+			displaySEG1(timeSEG1[ledIndex]);
+
+			// Hiển thị số 3 (mode 3)
+			displayWhichSEG2(1);
+			displaySEG2(mode);
+
+			// Logic quét LED
+			ledIndex++;
+			if (ledIndex > 1)
+				ledIndex = 0;
+			toogleCount--;
+			if (toogleCount < 0)
+				toogleCount = 12;
+			break;
+		}
+		case 4:
+		{
+			// Nhấp nháy LED Xanh
+			if (toogleCount == 0)
+			{
+				HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
+				HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
+			}
+			// Hiển thị thời gian Xanh tạm thời
+			displayWhatSEG1(greenTemp);
+			displayWhichSEG1(ledIndex);
+			displaySEG1(timeSEG1[ledIndex]);
+
+			// Hiển thị số 4 (mode 4)
+			displayWhichSEG2(1);
+			displaySEG2(mode);
+
+			// Logic quét LED
+			ledIndex++;
+			if (ledIndex > 1)
+				ledIndex = 0;
+			toogleCount--;
+			if (toogleCount < 0)
+				toogleCount = 12;
+			break;
+		}
+		default:
+			break;
 	}
 }

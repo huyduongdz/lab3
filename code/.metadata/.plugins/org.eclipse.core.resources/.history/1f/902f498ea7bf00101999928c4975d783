@@ -436,25 +436,186 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if (timer0_flag == 1)
-	  	  {
-	  		  setTimer0(10);
-	  		  fsm_for_input_processing(); // Chỉ xử lý logic nút nhấn
-	  	  }
+	  switch (mode)
+	  {
+	  case 1:
+	  {
+		  if (timer1s_flag == 1)
+		  {
+			  setTimer1s(1000);
+			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_15);       //blinky led
 
-	  	  // Task 2: Xử lý logic 1 giây (chạy mỗi 1000ms)
-	  	  if (timer1s_flag == 1)
-	  	  {
-	  		  setTimer1s(1000);
-	  		  fsm_for_1s_logic(); // Xử lý FSM của đèn giao thông (Mode 1)
-	  	  }
+			  cooldown1--;
+			  cooldown2--;
 
-	  	  // Task 3: Xử lý hiển thị (chạy mỗi 40ms)
-	  	  if (timerFPS_flag == 1)
-	  	  {
-	  		  setTimerFPS(40);
-	  		  fsm_for_display_logic(); // Xử lý tất cả quét LED 7-seg và nhấp nháy LED
-	  	  }
+			  if (cooldown1 == redTime + yellowTime)
+			  {
+				  temp1 = yellowTime;
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);  //bat vang 1
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+			  }
+			  if (cooldown2 == greenTime + yellowTime)
+			  {
+				  temp2 = greenTime;
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);  //bat xanh 2
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
+			  }
+			  if (cooldown1 == redTime)
+			  {
+				  temp1 = redTime;
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);  //bat do 1
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+			  }
+			  if (cooldown2 == yellowTime)
+			  {
+				  temp2 = yellowTime;
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);  //bat vang 2
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
+			  }
+			  if (cooldown1 == 0)
+			  {
+				  temp1 = greenTime;
+				  cooldown1 = greenTime + redTime + yellowTime;
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);  //bat xanh 1
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+			  }
+			  if (cooldown2 == 0)
+			  {
+				  temp2 = redTime;
+				  cooldown2 = greenTime + redTime + yellowTime;
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);  //bat do 2
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+				  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
+			  }
+
+
+			  temp1--;
+			  temp2--;
+
+		  }
+
+		  if (timerFPS_flag == 1)
+		  {
+			  setTimerFPS(40);
+
+			  displayWhatSEG1(temp1);
+			  displayWhichSEG1(ledIndex);
+			  displaySEG1(timeSEG1[ledIndex]);
+
+			  displayWhatSEG2(temp2);
+			  displayWhichSEG2(ledIndex);
+			  displaySEG2(timeSEG2[ledIndex]);
+
+			  ledIndex++;
+			  if (ledIndex > 1)
+				  ledIndex = 0;
+		  }
+
+		  if(timer0_flag == 1)
+		  {
+			  setTimer0(10);
+			  fsm_for_input_processing();
+		  }
+		  break;
+	  }
+	  case 2:
+	  {
+		  if (timer0_flag == 1)
+		  {
+			  setTimer0(10);
+			  fsm_for_input_processing();
+			  displayWhichSEG2(1);
+			  displaySEG2(mode);                          //display mode on led 2
+		  }
+
+		  if (timerFPS_flag == 1)
+		  {
+			  setTimerFPS(40);
+			  if (toogleCount == 0)
+			  {
+				  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);
+				  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13); //after 0.5s toogle 2 RED_LED
+			  }
+			  displayWhatSEG1(redTemp);                    //what to display on 7 SEG A (red time)
+			  displayWhichSEG1(ledIndex);                  //choose which 7 SEG A to display in this loop (0 or 1)
+			  displaySEG1(timeSEG1[ledIndex]);             //display time on led A
+			  ledIndex++;                                 // move to next 7 SEG A
+			  if (ledIndex > 1)
+				  ledIndex = 0;
+			  toogleCount--;
+			  if (toogleCount < 0)
+				  toogleCount = 12;
+		  }
+		  break;
+	  }
+	  case 3:
+	  {
+		  if (timer0_flag == 1)
+		  {
+			  setTimer0(10);
+			  fsm_for_input_processing();
+			  displayWhichSEG2(1);
+			  displaySEG2(mode);                          //display mode on led B
+		  }
+
+		  if (timerFPS_flag == 1)
+		  {
+			  setTimerFPS(40);
+			  if (toogleCount == 0)
+			  {
+				  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
+				  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_15); //after 0.5s toogle 2 RED_LED
+			  }
+			  displayWhatSEG1(yellowTemp);                    //what to display on 7 SEG A (red time)
+			  displayWhichSEG1(ledIndex);                  //choose which 7 SEG A to display in this loop (0 or 1)
+			  displaySEG1(timeSEG1[ledIndex]);             //display time on led A
+			  ledIndex++;                                 // move to next 7 SEG A
+			  if (ledIndex > 1)
+				  ledIndex = 0;
+			  toogleCount--;
+			  if (toogleCount < 0)
+				  toogleCount = 12;
+		  }
+		  break;
+	  }
+	  case 4:
+	  {
+		  if (timer0_flag == 1)
+		  {
+			  setTimer0(10);
+			  fsm_for_input_processing();
+			  displayWhichSEG2(1);
+			  displaySEG2(mode);                          //display mode on led B
+		  }
+
+		  if (timerFPS_flag == 1)
+		  {
+			  setTimerFPS(40);
+			  if (toogleCount == 0)
+			  {
+				  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_11);
+				  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14); //after 0.5s toogle 2 RED_LED
+			  }
+			  displayWhatSEG1(greenTemp);                    //what to display on 7 SEG A (red time)
+			  displayWhichSEG1(ledIndex);                  //choose which 7 SEG A to display in this loop (0 or 1)
+			  displaySEG1(timeSEG1[ledIndex]);             //display time on led A
+			  ledIndex++;                                 // move to next 7 SEG A
+			  if (ledIndex > 1)
+				  ledIndex = 0;
+			  toogleCount--;
+			  if (toogleCount < 0)
+				  toogleCount = 12;
+		  }
+		  break;
+	  }
+	  default:
+		  break;
+	  }
   }
   /* USER CODE END 3 */
 }

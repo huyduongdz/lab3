@@ -59,32 +59,22 @@ extern int timer0_flag;
 extern int timerFPS_flag;
 extern int timer1s_flag;
 extern int mode;
-extern int greenTime;
-extern int yellowTime;
+extern int redTemp;
+extern int yellowTemp;
+extern int greenTemp;
 extern int redTime;
+extern int yellowTime;
+extern int greenTime;
 extern int cooldown1;
 extern int cooldown2;
-extern int greenTemp;
-extern int yellowTemp;
-extern int redTemp;
 extern int temp1;
 extern int temp2;
-extern int ledIndex;
-extern int timeSEG1[2];
-extern int timeSEG2[2];
-extern int toogleCount;
 
-extern void setTimer0(int duration);
-extern void setTimer1s(int duration);
-extern void setTimerFPS(int duration);
-
-void displayWhichSEG1(int index);
-void displayWhichSEG2(int index);
-void offLED(void);
-void displayWhatSEG1(int time);
-void displayWhatSEG2(int time);
-void displaySEG1(int num);
-void displaySEG2(int num);
+void setTimer0(int duration);
+void setTimerFPS(int duration);
+void setTimer1s(int duration);
+void timer_run();
+void offLED();
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
